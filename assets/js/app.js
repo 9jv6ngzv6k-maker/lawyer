@@ -153,7 +153,7 @@ if('IntersectionObserver' in W){
 
 /* ═════════════ СЛОИ: меню, справка, политика ═════════════ */
 var layers=[];
-function focusables(root){return $$('a[href],button:not([disabled]),input:not([type=hidden]),select,textarea,[tabindex]:not([tabindex="-1"])',root).filter(function(x){return x.offsetParent!==null||x===D.activeElement});}
+function focusables(root){return [].concat.apply([],[].concat(root).map(function(r){return $$('a[href],button:not([disabled]),input:not([type=hidden]),select,textarea,[tabindex]:not([tabindex="-1"])',r)})).filter(function(x){return x.offsetParent!==null||x===D.activeElement});}
 function trap(e,root){if(e.key!=='Tab')return;var f=focusables(root);if(!f.length)return;var a=f[0],z=f[f.length-1];
   if(e.shiftKey&&D.activeElement===a){e.preventDefault();z.focus();}else if(!e.shiftKey&&D.activeElement===z){e.preventDefault();a.focus();}}
 function lock(){R.classList.add('lock')}
@@ -166,7 +166,8 @@ function closeLayer(el){var i=-1;layers.forEach(function(l,k){if(l.el===el)i=k})
 D.addEventListener('keydown',function(e){
   if(!$('#dive').hidden){ if(e.key==='Escape'){closeCase();} else trap(e,$('#dive')); return; }
   if(layers.length){var top=layers[layers.length-1].el; if(e.key==='Escape')closeLayer(top); else trap(e,top); return;}
-  if(!$('#menu').hidden){ if(e.key==='Escape')setMenu(false); else trap(e,D.body); }
+  /* меню: фокус ходит по шапке и меню, не уходит под оверлей; Esc возвращает фокус на бургер */
+  if(!$('#menu').hidden){ if(e.key==='Escape'){setMenu(false);burger.focus();} else trap(e,[$('#hdr'),$('#menu')]); }
 });
 
 var burger=$('#burger'), menu=$('#menu');
