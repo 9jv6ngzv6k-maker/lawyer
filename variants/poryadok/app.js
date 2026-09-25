@@ -104,13 +104,14 @@ if(sits){
   var rT; W.addEventListener('resize',function(){ clearTimeout(rT); rT=setTimeout(function(){ if(cur>=0){var b=$('.sit[data-dir="'+cur+'"]',sits); if(b) placeCard(b);} },120); });
 }
 
-/* ═════ Проверка срока ═════ (та же логика, что на основном сайте: +3 месяца со дня получения отказа) */
+/* ═════ Проверка срока ═════ (та же логика, что на основном сайте: три месяца со дня получения отказа) */
 function mask(inp){ inp.addEventListener('input',function(){ var v=inp.value.replace(/\D/g,'').slice(0,8), o=v.slice(0,2);
   if(v.length>2)o+='.'+v.slice(2,4); if(v.length>4)o+='.'+v.slice(4); inp.value=o; }); }
 function parseDate(s){ var m=/^(\d{2})\.(\d{2})\.(\d{4})$/.exec(s||''); if(!m)return null; var d=new Date(+m[3],+m[2]-1,+m[1]);
   if(d.getDate()!==+m[1]||d.getMonth()!==+m[2]-1||+m[3]<1990)return null; return d; }
 function today(){ var t=new Date(); return new Date(t.getFullYear(),t.getMonth(),t.getDate()); }
-function term(d){ var e=new Date(d.getTime()); e.setMonth(e.getMonth()+3); var t=today(), days=Math.round((e-t)/864e5);
+function term(d){ /* три месяца; нет такого числа — последний день месяца (ст. 93 КАС РФ) */
+  var e=new Date(d.getFullYear(),d.getMonth()+3,1); e.setDate(Math.min(d.getDate(),new Date(e.getFullYear(),e.getMonth()+1,0).getDate())); var t=today(), days=Math.round((e-t)/864e5);
   return {end:e,days:days,future:d>t,p:Math.max(0,Math.min(1,(t-d)/(e-d)))}; }
 function left(n){ return (n%10===1&&n%100!==11?'Остался ':'Осталось ')+n+' '+plural(n,'день','дня','дней'); }
 

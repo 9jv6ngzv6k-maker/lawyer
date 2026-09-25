@@ -366,6 +366,10 @@ textarea.inp{min-height:120px;resize:vertical}
 @media (min-width:600px){
   :root{--gut:32px}
   .sits{grid-template-columns:1fr 1fr}
+  .sit{min-height:72px;display:grid;grid-template-columns:1fr auto;grid-template-areas:"t a" "n a";gap:4px 12px;align-items:center}
+  .sit-t{grid-area:t;font-size:1.0625rem}
+  .sit-n{grid-area:n;text-align:left;max-width:none}
+  .sit::after{grid-area:a}
   .sit-li-other{grid-column:1/-1}
   .facts{grid-template-columns:repeat(4,1fr)}
   .fact,.fact:nth-child(even){padding:18px 14px 18px 0;border-right:1px solid var(--line)}
@@ -417,10 +421,6 @@ textarea.inp{min-height:120px;resize:vertical}
   .fact dt{font-size:3rem}
   .fact-w dt{font-size:1.25rem}
 
-  .sit{min-height:76px;display:grid;grid-template-columns:1fr auto;grid-template-areas:"t a" "n a";gap:4px 12px;align-items:center}
-  .sit-t{grid-area:t;font-size:1.0625rem}
-  .sit-n{grid-area:n;text-align:left;max-width:none}
-  .sit::after{grid-area:a}
   .card p,.card dd,.card li{font-size:1.0625rem}
   .sits{gap:10px}
   .card{padding:28px 30px}
