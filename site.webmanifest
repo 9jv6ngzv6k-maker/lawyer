@@ -1,0 +1,14 @@
+{
+  "name": "Халбаев и партнёры — юрист по спорам военнослужащих",
+  "short_name": "Халбаев",
+  "lang": "ru",
+  "start_url": "./",
+  "scope": "./",
+  "display": "browser",
+  "background_color": "#F3F5F8",
+  "theme_color": "#F3F5F8",
+  "icons": [
+    { "src": "favicon.svg", "type": "image/svg+xml", "sizes": "any" },
+    { "src": "apple-touch-icon.png", "type": "image/png", "sizes": "180x180" }
+  ]
+}

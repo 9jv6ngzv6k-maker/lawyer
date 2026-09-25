@@ -1,0 +1,10 @@
+# Домен-плейсхолдер https://example.ru — заменить на реальный (см. README, раздел «Публикация»).
+User-agent: *
+Allow: /
+# Служебное: при публикации через GitHub Actions эти пути не выкладываются;
+# правила на случай публикации всего репозитория (Deploy from branch).
+Disallow: /variants/
+Disallow: /tools/
+Disallow: /orig.html
+
+Sitemap: https://example.ru/sitemap.xml

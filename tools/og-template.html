@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<title>OG-шаблон</title>
+<!--
+  Шаблон картинки для соцсетей (Open Graph / Twitter), 1200×630.
+  Рендер в assets/img/og.png: node tools/render-images.js
+  Шрифты и цвета — те же, что на сайте (assets/css/site.css).
+-->
+<style>
+@font-face{font-family:'Playfair Display';font-style:normal;font-weight:400;src:url(../assets/fonts/playfair-display-normal-400-8ca4d9dd.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Playfair Display';font-style:normal;font-weight:400;src:url(../assets/fonts/playfair-display-normal-400-18bd7f97.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:'Playfair Display';font-style:italic;font-weight:400;src:url(../assets/fonts/playfair-display-italic-400-008d9b9f.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Playfair Display';font-style:italic;font-weight:400;src:url(../assets/fonts/playfair-display-italic-400-e69ad6ee.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:'Onest';font-style:normal;font-weight:500;src:url(../assets/fonts/onest-normal-500-e8d08684.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'Onest';font-style:normal;font-weight:500;src:url(../assets/fonts/onest-normal-500-9db4c793.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;src:url(../assets/fonts/jetbrains-mono-normal-400-46a14c9f.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
+@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;src:url(../assets/fonts/jetbrains-mono-normal-400-2530f568.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F}
+:root{--paper:#F3F5F8;--ink:#0E1B2C;--ink-2:#3B4757;--steel:#2F5F8A}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{width:1200px;height:630px;overflow:hidden}
+body{background:var(--paper);color:var(--ink);font-family:'Onest',system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.card{position:relative;width:1200px;height:630px;padding:64px 72px 56px;display:flex;flex-direction:column;
+  background:radial-gradient(900px 520px at 88% 30%,#E3E9F0 0,rgba(227,233,240,0) 70%),var(--paper)}
+.card::after{content:"";position:absolute;inset:24px;border:1px solid rgba(14,27,44,.12);pointer-events:none}
+.brand{display:flex;align-items:center;gap:16px}
+.brand svg{width:52px;height:52px}
+.word{font-family:'Playfair Display',Georgia,serif;font-size:31px;line-height:1}
+.word em{color:var(--steel)}
+.tag{margin-top:48px;font-family:'JetBrains Mono',monospace;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.tag b{color:var(--steel);font-weight:400}
+h1{margin-top:18px;font-family:'Playfair Display',Georgia,serif;font-weight:400;font-size:76px;line-height:1.02;letter-spacing:-.018em;max-width:900px}
+h1 em{font-style:italic}
+.strike{position:relative;white-space:nowrap}
+.strike svg{position:absolute;left:-4%;top:18%;width:108%;height:60%;overflow:visible}
+.strike path{fill:none;stroke:var(--steel);stroke-width:5;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.foot{margin-top:auto;display:flex;align-items:center;gap:28px;font-size:26px;font-weight:500;letter-spacing:.01em}
+.foot .sep{width:1px;height:28px;background:rgba(14,27,44,.25)}
+.foot .muted{color:var(--steel)}
+.mark{position:absolute;right:64px;bottom:40px;width:250px;height:250px;color:var(--steel);opacity:.13}
+</style>
+</head>
+<body>
+<div class="card">
+ <div class="brand">
+  <svg viewBox="0 0 120 120" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="5.2" stroke-linejoin="round" stroke-linecap="round"><path d="M103.89,84.26 L99.53,79.58 L93.24,85.45 L82.7,74.15 L76.76,80.68 L86.8,91.45 L80.51,97.31 L84.88,102 L92.19,95.18 L101.83,105.52"/><path d="M16.11,84.26 L20.47,79.58 L26.76,85.45 L37.3,74.15 L43.24,80.68 L33.2,91.45 L39.49,97.31 L35.12,102 L27.81,95.18 L18.17,105.52"/><path d="M26.4,13.78 L15,8 L19.97,19.78 L32.04,32.72"/><path d="M93.6,13.78 L105,8 L100.03,19.78 L87.96,32.72"/><path d="M40.6,33 H79.4 A3.6,3.6 0 0 1 83,36.6 V65.2 L60,90.5 L37,65.2 V36.6 A3.6,3.6 0 0 1 40.6,33 Z"/></svg>
+  <span class="word">Халбаев <em>и партнёры</em></span>
+ </div>
+ <p class="tag"><b>§</b> Практика военной юстиции · работа по всей России</p>
+ <h1>Защита военнослужащих<br>в&nbsp;судах. <span class="strike">Отказ<svg viewBox="0 0 100 40" preserveAspectRatio="none"><path d="M2,26 C18,22 30,21 46,20 C62,19 78,17 97,13 C92,15.5 88,17.6 84,19.8"/></svg></span> —<br><em>не последнее слово.</em></h1>
+ <div class="foot">
+  <span>+7 950 728-92-46</span><span class="sep"></span><span class="muted">t.me/llawyerll</span>
+ </div>
+ <svg class="mark" viewBox="0 0 120 120" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round"><path d="M103.89,84.26 L99.53,79.58 L93.24,85.45 L82.7,74.15 L76.76,80.68 L86.8,91.45 L80.51,97.31 L84.88,102 L92.19,95.18 L101.83,105.52"/><path d="M16.11,84.26 L20.47,79.58 L26.76,85.45 L37.3,74.15 L43.24,80.68 L33.2,91.45 L39.49,97.31 L35.12,102 L27.81,95.18 L18.17,105.52"/><path d="M26.4,13.78 L15,8 L19.97,19.78 L32.04,32.72"/><path d="M93.6,13.78 L105,8 L100.03,19.78 L87.96,32.72"/><path d="M40.6,33 H79.4 A3.6,3.6 0 0 1 83,36.6 V65.2 L60,90.5 L37,65.2 V36.6 A3.6,3.6 0 0 1 40.6,33 Z"/></svg>
+</div>
+</body>
+</html>
