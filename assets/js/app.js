@@ -235,8 +235,8 @@ if(letter){
 function mask(inp){inp.addEventListener('input',function(){var v=inp.value.replace(/\D/g,'').slice(0,8),o=v.slice(0,2);if(v.length>2)o+='.'+v.slice(2,4);if(v.length>4)o+='.'+v.slice(4);inp.value=o;})}
 function parseDate(s){var m=/^(\d{2})\.(\d{2})\.(\d{4})$/.exec(s||'');if(!m)return null;var d=new Date(+m[3],+m[2]-1,+m[1]);if(d.getDate()!==+m[1]||d.getMonth()!==+m[2]-1||+m[3]<1990)return null;return d}
 function today(){var t=new Date();return new Date(t.getFullYear(),t.getMonth(),t.getDate())}
-function term(d){ /* три месяца со дня получения отказа (setMonth + 3) */
-  var e=new Date(d.getTime()); e.setMonth(e.getMonth()+3); var t=today(), days=Math.round((e-t)/864e5);
+function term(d){ /* три месяца со дня получения отказа; нет такого числа — последний день месяца (ст. 93 КАС) */
+  var e=new Date(d.getFullYear(),d.getMonth()+3,1); e.setDate(Math.min(d.getDate(),new Date(e.getFullYear(),e.getMonth()+1,0).getDate())); var t=today(), days=Math.round((e-t)/864e5);
   return {end:e,days:days,future:d>t,p:clamp((t-d)/(e-d),0,1)}; }
 var cIn=$('#calcIn'), cOut=$('#calcOut'), cBig=$('#cBig'), cTxt=$('#cTxt'), cFill=$('#cFill'), cDot=$('#cDot'), cX=$('#cX');
 function calc(){ var s=cIn.value, d=parseDate(s); cX.hidden=true;
