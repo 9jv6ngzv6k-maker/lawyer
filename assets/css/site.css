@@ -535,8 +535,8 @@ svg{display:block}
 .acc-a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .55s var(--ease)}
 .acc.open .acc-a{grid-template-rows:1fr}
 .acc-clip{overflow:hidden;min-height:0}
-.acc-clip p{padding:0 0 20px;font-size:16px;line-height:1.62;color:var(--ink-2);max-width:44em;opacity:0;transform:translate3d(0,-8px,0);transition:opacity .4s,transform .6s var(--ease)}
-.acc.open .acc-clip p{opacity:1;transform:none;transition-delay:.1s}
+.acc-clip>p{padding:0 0 20px;font-size:16px;line-height:1.62;color:var(--ink-2);max-width:44em;opacity:0;transform:translate3d(0,-8px,0);transition:opacity .4s,transform .6s var(--ease)}
+.acc.open .acc-clip>p{opacity:1;transform:none;transition-delay:.1s}
 .acc-clip .lnk{margin:-8px 0 16px}
 .sheet-navy .acc{border-bottom-color:rgba(175,193,212,.2)}
 .sheet-navy .acc-b{color:#fff}
@@ -1233,3 +1233,153 @@ html,body{overflow-anchor:none}
 .tome-lb{gap:16px;flex-wrap:wrap}
 .tome-lb span{background:rgba(243,245,248,.9);padding:6px 10px;border-radius:2px;color:var(--ink-2)}
 @media (max-width:620px){.tome.sec{padding:0 14px;margin-top:96px}}
+
+/* ═════════ v8 · ревью дизайнера: композиция и плотность (визуальный язык прежний) ═════════ */
+/* 5 · промежутки между разделами — на треть короче */
+.sec,.tome.sec{margin-top:clamp(94px,12vh,140px)}
+.foot{padding-top:clamp(94px,12vh,140px)}
+@media (max-width:620px){.sec,.tome.sec{margin-top:64px}.foot{padding-top:70px}}
+
+/* 1 · раскрывающиеся строки: закрытая строка не попадает в Tab-порядок и в дерево доступности */
+.acc-a{visibility:hidden;transition:grid-template-rows .55s var(--ease),visibility 0s linear .55s}
+.acc.open .acc-a{visibility:visible;transition:grid-template-rows .55s var(--ease),visibility 0s}
+.acc-clip>div{padding-bottom:24px;opacity:0;transform:translate3d(0,-8px,0);transition:opacity .4s,transform .6s var(--ease)}
+.acc.open .acc-clip>div{opacity:1;transform:none;transition-delay:.1s}
+.kak-acc{margin-top:clamp(34px,4vw,52px);padding-top:clamp(6px,.8vw,12px);padding-bottom:clamp(6px,.8vw,12px)}
+.kak-acc .acc:last-child{border-bottom:0}
+.kak-acc .pay{max-width:44em}
+.kak-acc .pay-lead{margin:0 0 10px}
+.kak-acc .bounds .dr-lb{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--steel);margin-bottom:6px}
+
+/* 1 · тома: «Ещё N» */
+.vA-more-row{margin-top:10px}
+.vA-more{width:100%;min-height:46px;font-size:14.5px;justify-content:space-between}
+.vA-more .pm{width:18px;height:18px;color:var(--steel);transition:transform .5s var(--ease)}
+.vA-more[aria-expanded="true"] .pm{transform:rotate(45deg)}
+
+/* 4 · строка из судебного акта на карточке исхода */
+.vA .oc-q{margin-top:10px}
+.vA .oc-q p:not(.oc-k){font-size:15.5px;font-style:italic}
+
+/* 2 · левая половина открытого тома: опись сверху, «Что подготовить» и заявка — внизу листа */
+.cvb-end{margin-top:auto;padding-top:28px}
+.cvb-end .cvb-prep{margin-top:0}
+.cvb-end .cvb-cta{margin-top:18px}
+.cvb-end .cvb-cta .btn-ink{flex:1 1 auto}
+.op-t a{background:linear-gradient(currentColor,currentColor) 0 100%/0 1px no-repeat;transition:background-size .45s var(--ease),color .3s}
+.op-t a:hover,.op-t a:focus-visible{background-size:100% 1px;color:var(--steel-2)}
+
+/* 6 · справка по папке: фраза, перенесённая с карточки */
+.dw-lead{margin:-10px 0 18px;padding-left:14px;border-left:2px solid var(--steel);font-size:16px;line-height:1.55;color:var(--ink-2)}
+
+/* 7 · мини-проверка срока на первом экране: одна компактная строка под кнопками */
+.hterm{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:4px 18px;margin-top:clamp(12px,1.6vh,18px);max-width:40em;padding:7px 14px 7px 16px;
+  background:rgba(255,255,255,.74);border-left:2px solid var(--steel);border-radius:2px}
+.hterm-f{display:flex;flex-direction:column;align-items:flex-start}
+.hterm-l{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);white-space:nowrap}
+.hterm input{width:8.4em;min-height:34px;padding:3px 2px;border:0;border-bottom:1.5px solid rgba(14,27,44,.3);border-radius:0;background:transparent;outline:0;
+  font-family:var(--mono);font-size:16px;letter-spacing:.04em;transition:border-color .3s}
+.hterm input:focus{border-bottom-color:var(--steel);box-shadow:0 1.5px 0 var(--steel)}
+.hterm-o{font-size:13px;line-height:1.4;color:var(--ink-2)}
+.hterm-o b{font-weight:600;color:var(--ink)}
+.hterm-o[data-state="ok"] b{color:var(--steel-2)}
+.hterm-go{display:inline-flex;align-items:center;gap:6px;min-height:40px;font-size:13px;font-weight:600;color:var(--steel-2);white-space:nowrap;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
+.hterm-go svg{width:16px;height:16px;transition:transform .45s var(--ease)}
+.hterm-go:hover svg{transform:translateX(3px)}
+/* место под строку на первом экране — за счёт воздуха, размеры заголовка и кнопок прежние */
+@media (min-width:621px){
+  .copy{padding-top:clamp(20px,3.4vh,48px);padding-bottom:clamp(14px,2vh,28px)}
+  .h1{margin-top:clamp(16px,2.8vh,32px)}
+  .lead{margin-top:clamp(14px,2.2vh,24px)}
+  .cta-row{margin-top:clamp(16px,2.8vh,30px)}
+  .facts{padding-top:clamp(14px,2.2vh,26px)}
+  .facts-line{top:clamp(14px,2.2vh,26px)}
+}
+
+/* 8 · экран «готово»: что будет дальше */
+.nx{margin-top:26px;padding-top:18px;border-top:1px solid var(--hair)}
+.done .nx-h{margin-top:0;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--steel)}
+.nx-l{margin-top:8px}
+.nx-l li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:8px;padding:10px 0;border-top:1px dashed rgba(14,27,44,.14)}
+.nx-l li:first-child{border-top:0}
+.nx-l b{font-size:12px;font-weight:500;color:var(--steel);padding-top:4px}
+.done .nx-t{margin-top:0;font-family:var(--serif);font-size:19px;line-height:1.2;color:var(--ink)}
+.done .nx-p{margin-top:3px;font-size:14.5px;line-height:1.5}
+.done .nx-f{margin-top:10px;font-size:13px;color:var(--muted)}
+
+/* 3 · телефон: коллаж документов на треть меньше — кнопка разбора видна без прокрутки (390×844, 360×740) */
+@media (max-width:620px){
+  .stage-col{height:258px}
+  .mstage{inset:0 auto auto 50%;width:calc(100% / .84);height:372px;translate:-50% 0;scale:.7;transform-origin:50% 0}
+  .h1{margin-top:12px}
+  .lead{margin-top:12px}
+  .cta-row{margin-top:16px}
+  .hterm{grid-template-columns:minmax(0,1fr) auto;margin-top:12px;padding:6px 12px}
+  .hterm-o{grid-column:1/-1;grid-row:2}
+}
+/* 4 · на широком томе строка акта и штамп стоят рядом — карточка не растёт в высоту */
+@media (min-width:901px){
+  .vA .oc:has(.oc-q){display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:16px;align-items:end}
+  .vA .oc:has(.oc-q)>.oc-n,.vA .oc:has(.oc-q)>.oc-t{grid-column:1/-1}
+  .vA .oc:has(.oc-q) .stamp{margin:10px 2px 2px 0}
+}
+/* телефон: обложка тома и папки плотнее */
+@media (max-width:620px){
+  .vA-front .cv{padding:18px 18px 18px 40px}
+  .cv-stitch{left:18px;top:16px;bottom:16px}
+  .cv-big{font-size:44px;margin-top:14px}
+  .cv-sub{font-size:16px;margin-top:8px}
+  .cv-foot{margin-top:14px;padding-top:12px;font-size:18px}
+  .fds{gap:34px}
+}
+/* 2 · «Ход дела» — второй лист на левой половине тома: страницы тома выровнены по высоте, пустого поля нет */
+.cvb-st{margin-top:26px}
+.cvb-st .vA-st{margin-top:12px;padding:2px 18px;background:#fff;border-radius:1px;box-shadow:0 0 0 1px rgba(14,27,44,.08),0 8px 20px -12px rgba(14,27,44,.35);transform:rotate(.4deg)}
+.cvb-st .vA-st li:first-child{border-top:0}
+.cvb-stat{margin-top:24px}
+@media (min-width:901px){.vA .oc:has(.oc-q) .st-ink{white-space:normal;max-width:190px}}
+@media (min-width:901px){
+  .cvb .op li{padding:9px 0}
+  .cvb-st .vA-st li{padding:8px 0}
+  .cvb-st .st-s{line-height:1.45}
+  .cvb-stat{margin-top:20px}
+  .cvb-end{padding-top:22px}
+}
+/* телефон/планшет: том читается по порядку — обложка → лист (заголовок, сроки, исходы) → оборот (опись, ход дела, что подготовить, заявка) */
+@media (max-width:900px){
+  .vA-book{gap:14px}
+  .vA-flip{display:contents}
+  .vA-front{order:-2}
+  .vA-page{order:-1}
+  .vA-back{order:1}
+}
+@media (max-width:620px){
+  .cv-court,.cv-no,.cv-sub{display:none}
+  .cv-big{margin-top:0}
+  .vA-back .cvb{padding:22px 14px 22px}
+  .cvb .op,.cvb-st .vA-st{padding-left:12px;padding-right:12px}
+  .vA-st li{grid-template-columns:26px minmax(0,1fr) 22px;gap:8px}
+  .vA-st .pensvg{width:20px;height:18px}
+  .op li{grid-template-columns:24px minmax(0,1fr)}
+}
+@media (max-width:620px){.vA-front .cv-vol{display:none}}
+/* оборот тома: на широком экране опись и ход дела раскрыты всегда (кнопки нет), на телефоне — строками */
+.cvb-acc{border-bottom:0}
+.cvb-acc-b{display:none}
+.cvb-acc>.acc-a{grid-template-rows:1fr;visibility:visible}
+.cvb-acc .acc-clip{overflow:visible}
+.cvb-acc .acc-clip>div{opacity:1;transform:none;padding-bottom:0}
+@media (max-width:900px){
+  .cvb-k-d{display:none}
+  .cvb-acc{border-bottom:1px solid rgba(26,42,63,.2)}
+  .cvb-st{margin-top:0}
+  .cvb-acc-b{display:flex;min-height:56px;padding:12px 0;font-size:19px}
+  .cvb-acc-b i{font-style:normal;font-size:12px;color:var(--steel);margin-left:6px}
+  .cvb-acc>.acc-a{grid-template-rows:0fr;visibility:hidden}
+  .cvb-acc.open>.acc-a{grid-template-rows:1fr;visibility:visible}
+  .cvb-acc .acc-clip{overflow:hidden}
+  .cvb-acc .acc-clip>div{padding:2px 4px 18px}
+  .cvb-acc .op,.cvb-acc .vA-st{margin-top:0;transform:none}
+  .vA-back .cvb>.acc:first-of-type{border-top:1px solid rgba(26,42,63,.2)}
+  .cvb-stat{margin-top:18px}
+}

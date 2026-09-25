@@ -61,6 +61,7 @@ function intro(){
   A($('.lead'),[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:1000,delay:640});
   $$('.cta-row>.mag').forEach(function(m,i){A(m,[{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:1000,delay:780+i*90});});
   A($('.sit-jump'),[{opacity:0},{opacity:1}],{duration:900,delay:1000});
+  A($('.hterm'),[{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'none'}],{duration:900,delay:960});
   $$('#cap li').forEach(function(li,i){A(li,[{opacity:0,transform:'translateX(-10px)'},{opacity:1,transform:'none'}],{duration:800,delay:1300+i*90});});
   A($('.facts-line'),[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:1300,delay:900,easing:'cubic-bezier(.65,0,.2,1)'});
   $$('.fact').forEach(function(f,i){A(f,[{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'none'}],{duration:900,delay:1000+i*80});});
@@ -181,6 +182,7 @@ $$('a',menu).forEach(function(a){a.addEventListener('click',function(){setMenu(f
 var CAT_DIR={0:6,1:0,2:1,3:2,4:4,5:3,6:5,7:7,8:7,9:7,10:7,11:7};
 function openCat(i,opener){var c=S.cats[i];if(!c)return;
   $('#drawerBody').innerHTML='<p class="dw-g mono">Справка по категории · '+esc(c.group)+' · '+esc(c.norm)+'</p><h3 class="dw-t" id="drawerT">'+esc(c.title)+'</h3>'+
+    (c.lead?'<p class="dw-lead">'+esc(c.lead)+'</p>':'')+
     c.blocks.map(function(b,k){return '<div class="dw-b" style="transition-delay:'+(160+k*70)+'ms"><h4>'+esc(b.label)+'</h4><p>'+esc(b.text)+'</p></div>'}).join('')+
     (c.status?'<p class="dw-st" style="transition-delay:'+(160+c.blocks.length*70)+'ms">'+esc(c.status)+'</p>':'')+
     '<a class="btn-ink btn-wide" href="#zayavka" data-dir="'+CAT_DIR[i]+'" data-close><span>Разобрать мою ситуацию бесплатно</span>'+ARROW+'</a>';
@@ -252,9 +254,29 @@ function calc(){ var s=cIn.value, d=parseDate(s); cX.hidden=true;
   else { var n=-r.days; set('late','Срок истёк','Срок истёк '+fmtDate(r.end)+', просрочка '+n+' '+plural(n,'день','дня','дней')+'. Восстановление возможно по уважительной причине.',1); cX.hidden=false; }
   if(!RM) A(cBig,[{opacity:0,transform:'translate3d(0,10px,0)'},{opacity:1,transform:'none'}],{duration:500});
 }
+/* мини-проверка срока на первом экране: та же term(), подробный расчёт — в #srok */
+var htIn=$('#htIn'), htOut=$('#htOut'), htGo=$('#htGo');
+if(htIn){ var htDef=htOut.innerHTML; mask(htIn);
+  htIn.addEventListener('input',function(){ var s=htIn.value, d=parseDate(s); htOut.dataset.state='';
+    if(s.length<10){ htOut.innerHTML=htDef; return; }
+    if(!d){ htOut.textContent='Проверьте дату: ДД.ММ.ГГГГ'; return; }
+    var r=term(d);
+    if(r.future){ htOut.textContent='Дата ещё не наступила — проверьте год.'; return; }
+    if(r.days>0){ htOut.dataset.state='ok'; htOut.innerHTML='<b>'+(r.days%10===1&&r.days%100!==11?'Остался ':'Осталось ')+r.days+' '+plural(r.days,'день','дня','дней')+'</b> · срок истекает '+fmtDate(r.end); }
+    else if(r.days===0){ htOut.dataset.state='ok'; htOut.innerHTML='<b>Сегодня последний день</b> · '+fmtDate(r.end); }
+    else { htOut.dataset.state='late'; htOut.innerHTML='<b>Срок истёк '+fmtDate(r.end)+'</b> · восстановление возможно по уважительной причине'; } });
+  htGo.addEventListener('click',function(){ if(parseDate(htIn.value)&&cIn){ cIn.value=htIn.value; calc(); dateIn.value=htIn.value; dateOut(); } }); }
+
 if(vw<=620){var hd=$('.how-d');if(hd)hd.removeAttribute('open');}
 if(cIn){ mask(cIn); cIn.addEventListener('input',calc); calc();
   $('#calcGo').addEventListener('click',function(){ if(parseDate(cIn.value)){$('#dateIn').value=cIn.value;dateOut();} }); }
+
+/* тома: первые 3 исхода видны, остальные — кнопкой «Ещё N» */
+$$('.vA-more').forEach(function(b){ var lb=$('span',b), txt=lb.textContent, ids=b.getAttribute('aria-controls').split(' ');
+  b.addEventListener('click',function(){ var on=b.getAttribute('aria-expanded')!=='true';
+    ids.forEach(function(id,i){ var el=D.getElementById(id); if(!el) return; el.hidden=!on;
+      if(on) A(el,[{opacity:0,transform:'translate3d(0,14px,0)'},{opacity:1,transform:'none'}],{duration:600,delay:i*80}); });
+    b.setAttribute('aria-expanded',on?'true':'false'); lb.textContent=on?'Свернуть':txt; }); });
 
 /* ═════════════ 04 РЕЕСТР ═════════════ */
 var ccs=$('#ccs');
@@ -295,7 +317,7 @@ $$('.acc-b').forEach(function(b){b.addEventListener('click',function(){var acc=b
 $$('.ftab').forEach(function(t,i){t.addEventListener('click',function(){$$('.ftab').forEach(function(x){x.setAttribute('aria-selected',x===t?'true':'false')});
   $$('.fpane').forEach(function(p,k){p.hidden=k!==i;p.classList.remove('fp-in');if(k===i){void p.offsetWidth;p.classList.add('fp-in');}});})});
 D.addEventListener('click',function(e){var b=e.target.closest('[data-faq]');if(!b)return;var t=$('#ft'+b.dataset.faq);if(t)t.click();scrollToEl($('#voprosy'),true);});
-(function(){var f=$('.fpane .acc');if(f){f.classList.add('open');$('.acc-b',f).setAttribute('aria-expanded','true');}})();
+/* вопросы и «Как работаю» — свёрнутыми строками: по умолчанию все закрыты */
 
 /* ═════════════ 06 ШАГИ ═════════════ */
 if('IntersectionObserver' in W&&!RM){

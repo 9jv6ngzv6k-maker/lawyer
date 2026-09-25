@@ -17,6 +17,14 @@ function setup(v){var page=v.querySelector('.vA-page'),ocs=[].slice.call(v.query
     setTimeout(function(){v.classList.add('shown')},1450);setTimeout(arm,2000);}
   v.__play=play;
   if('IntersectionObserver' in window){var o=new IntersectionObserver(function(es){if(es[0].isIntersecting){o.disconnect();play();}},{rootMargin:'0px 0px -38% 0px',threshold:0});o.observe(v);}else play();}
+/* v8: левая половина (оборот обложки) лежит поверх страницы абсолютно — страница не должна быть ниже её содержимого */
+function fitBack(v){var page=v.querySelector('.vA-page'),cvb=v.querySelector('.cvb');if(!page||!cvb)return;
+  if(innerWidth<=900){page.style.minHeight='';return;}
+  var cs=getComputedStyle(cvb),h=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
+  [].forEach.call(cvb.children,function(c){var s=getComputedStyle(c);h+=c.offsetHeight+(c.classList.contains('cvb-end')?0:parseFloat(s.marginTop)||0)+(parseFloat(s.marginBottom)||0);});
+  page.style.minHeight=Math.ceil(h)+'px';}
+function fitAll(){vols.forEach(fitBack);}
+fitAll();addEventListener('resize',fitAll,{passive:true});if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fitAll);
 vols.forEach(setup);
 window.__replay=function(){var v=vols.filter(function(x){var r=x.getBoundingClientRect();return r.top<innerHeight&&r.bottom>0})[0]||vols[0];v.__play();};
 })();

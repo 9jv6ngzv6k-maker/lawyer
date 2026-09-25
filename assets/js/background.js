@@ -1,6 +1,6 @@
 /* v7 · видео-подложка: выбор кодека, скорость 0.5×, параллакс за мышью (≤12px, scale 1.06),
    пауза в скрытой вкладке, постер при reduced-motion / экономии трафика / медленной сети,
-   состояния под томами (blur 9px + сталь 12%; открытый том — видео приглушено до 30%). */
+   состояния под томами (blur 9px + сталь 10%; открытый том — видео приглушено до 20%). */
 (function(){
 'use strict';
 var D=document,W=window,R=D.documentElement,box=D.getElementById('vbg');if(!box)return;
@@ -8,9 +8,10 @@ var media=box.querySelector('.vbg-media'),RM=R.classList.contains('rm')||!!(W.ma
 var con=navigator.connection||{},slow=!!(con.saveData||/(^|-)2g$/.test(con.effectiveType||''));
 var dim=1,state='';
 function apply(){var pp,bl,st;
-  if(state==='open'){bl=9;st=.12;pp=.7;}          /* видео видно на 30% */
-  else if(state==='tome'){bl=9;st=.12;pp=.5;}
-  else {bl=2.5;st=0;pp=.55+(1-dim)*.55;}
+  /* v8: за текстом бледнее — бумажная вуаль плотнее, как только первый экран уехал (на самом верху — как было) */
+  if(state==='open'){bl=9;st=.1;pp=.8;}           /* видео видно на 20% */
+  else if(state==='tome'){bl=9;st=.1;pp=.64;}
+  else {bl=2.5;st=0;pp=.55+(1-dim)*1.1;}          /* 0.55 на первом экране → 0.79 после прокрутки */
   box.style.setProperty('--bl',bl+'px');box.style.setProperty('--st',st);box.style.setProperty('--pp',pp.toFixed(3));}
 W.__bgDim=function(v){v=+v;if(!(v>=0))v=0;dim=Math.min(1,v);apply();};
 apply();
