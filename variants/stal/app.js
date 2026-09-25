@@ -164,6 +164,7 @@ function calc(){
  else if(r.days===0) set('ok','Сегодня','Сегодня последний день.',1);
  else {var n=-r.days;set('late','Срок истёк','Срок истёк '+fmtDate(r.end)+', просрочка '+n+' '+plural(n,'день','дня','дней')+'. Восстановление возможно по уважительной причине.',1);cX.hidden=false;}
 }
+if(W.innerWidth<=620){var hw=$('.how');if(hw)hw.removeAttribute('open');}
 if(cIn){mask(cIn);cIn.addEventListener('input',calc);calc();W.addEventListener('resize',calc);}
 
 /* ═════════ 05 РЕЕСТР ═════════ */

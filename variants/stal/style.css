@@ -565,7 +565,7 @@ em{font-style:italic}
 .fld-o:empty{display:none}
 .fld-o.late{color:var(--warn)}
 .agree{position:relative;display:grid;grid-template-columns:24px 1fr;gap:12px;font-size:14px;line-height:1.55;color:var(--ink-2);cursor:pointer}
-.agree input{position:absolute;left:0;top:0;width:24px;height:24px;margin:0;opacity:0;cursor:pointer}
+.agree input{position:absolute;left:0;top:0;z-index:1;width:24px;height:24px;margin:0;opacity:0;cursor:pointer}
 .agree .box{width:22px;height:22px;margin-top:1px;border-radius:3px;border:1px solid #3F4A58;background:#0E1217;box-shadow:inset 0 1px 3px rgba(0,0,0,.6);position:relative;transition:all .25s}
 .agree .box::after{content:"";position:absolute;left:7px;top:3px;width:6px;height:11px;border:solid #0E1217;border-width:0 2px 2px 0;transform:rotate(45deg) scale(0);transition:transform .25s var(--ease)}
 .agree input:checked+.box{background:linear-gradient(180deg,#EEF2F6,#A9B5C2);border-color:transparent}
@@ -739,3 +739,5 @@ em{font-style:italic}
 .rm .strike i{animation:none;transform:rotate(-3deg)}
 
 .dc-norm.sm{font-size:clamp(20px,1.7vw,27px)}
+.acts:not(.acts-2) .act{max-width:880px}
+@media (max-width:760px){.xd-meta{display:none}.xd-head{padding-bottom:14px;margin-bottom:18px}}
