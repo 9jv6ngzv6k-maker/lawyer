@@ -1,46 +1,65 @@
-/* v7 · видео-подложка: выбор кодека, скорость 0.5×, параллакс за мышью (≤12px, scale 1.06),
-   пауза в скрытой вкладке, постер при reduced-motion / экономии трафика / медленной сети,
-   состояния под томами (blur 9px + сталь 10%; открытый том — видео приглушено до 20%). */
+/* v9 · видео-подложка: выбор кодека, скорость 0.5×, параллакс за мышью (≤12px, scale 1.06),
+   пауза в скрытой вкладке, постер при reduced-motion / экономии трафика / медленной сети.
+   Ниже первого экрана фон одного спокойного состояния: бумажная вуаль 0.88, blur 6px, без стали
+   (состояния «под томом» и «открытый том» убраны — фон больше не «дышит» между разделами).
+   Телефон (≤700px): только bg-small.mp4 и только пока виден первый экран (#top); дальше — неподвижный постер. */
 (function(){
 'use strict';
 var D=document,W=window,R=D.documentElement,box=D.getElementById('vbg');if(!box)return;
 var media=box.querySelector('.vbg-media'),RM=R.classList.contains('rm')||!!(W.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches);
 var con=navigator.connection||{},slow=!!(con.saveData||/(^|-)2g$/.test(con.effectiveType||''));
-var dim=1,state='';
-function apply(){var pp,bl,st;
-  /* v8: за текстом бледнее — бумажная вуаль плотнее, как только первый экран уехал (на самом верху — как было) */
-  if(state==='open'){bl=9;st=.1;pp=.8;}           /* видео видно на 20% */
-  else if(state==='tome'){bl=9;st=.1;pp=.64;}
-  else {bl=2.5;st=0;pp=.55+(1-dim)*1.1;}          /* 0.55 на первом экране → 0.79 после прокрутки */
-  box.style.setProperty('--bl',bl+'px');box.style.setProperty('--st',st);box.style.setProperty('--pp',pp.toFixed(3));}
+/* первый экран: вуаль .55 / blur 2.5px; первый экран ушёл: .88 / 6px — плавно, по тому же dim (1 → .78), что и раньше */
+var TOP={pp:.55,bl:2.5},BELOW={pp:.88,bl:6},dim=1;
+function apply(){var k=Math.min(1,Math.max(0,(1-dim)/.22));
+  box.style.setProperty('--bl',(TOP.bl+(BELOW.bl-TOP.bl)*k).toFixed(2)+'px');
+  box.style.setProperty('--st','0');
+  box.style.setProperty('--pp',(TOP.pp+(BELOW.pp-TOP.pp)*k).toFixed(3));}
 W.__bgDim=function(v){v=+v;if(!(v>=0))v=0;dim=Math.min(1,v);apply();};
 apply();
-/* состояние под томами */
-var tomes=[].slice.call(D.querySelectorAll('.tome'));
-function tomeState(){var h=innerHeight,s='';tomes.forEach(function(t){var r=t.getBoundingClientRect();if(r.top<h*.55&&r.bottom>h*.45){var v=t.querySelector('.vA');s=(v&&v.classList.contains('open'))?'open':'tome';}});
-  if(s!==state){state=s;apply();}}
-if(tomes.length){W.addEventListener('scroll',tomeState,{passive:true});setInterval(tomeState,400);}
-/* видео — после события load и простоя главного потока: не конкурирует с шрифтами, постером и скриптами первого экрана
-   (до старта виден постер; появление видео по-прежнему плавное — класс .playing) */
 if(RM||slow)return;
-var VIDEO={'vbg-webm':'assets/video/bg.webm','vbg-mp4':'assets/video/bg.mp4','vbg-mp4s':'assets/video/bg-small.mp4'};
-function b64(id){return VIDEO[id]||'';}
-function startVideo(){
-var v=D.createElement('video');v.muted=true;v.defaultMuted=true;v.loop=true;v.playsInline=true;v.setAttribute('playsinline','');v.setAttribute('muted','');v.preload='auto';v.setAttribute('aria-hidden','true');
-var src='',type='';
-if(v.canPlayType('video/webm; codecs="vp9"')){src=b64('vbg-webm');type='video/webm';}
-if(!src&&v.canPlayType('video/mp4; codecs="avc1.4D401F"')){src=b64(innerWidth<=700?'vbg-mp4s':'vbg-mp4');type='video/mp4';}
-if(!src)return;
-var so=D.createElement('source');so.src=src;so.type=type;v.appendChild(so);
-media.appendChild(v);
-function rate(){try{v.playbackRate=.5;}catch(e){}}
-v.addEventListener('loadedmetadata',rate);v.addEventListener('play',rate);
-v.addEventListener('playing',function(){box.classList.add('playing');});
-function tryPlay(){var p=v.play();if(p&&p.catch)p.catch(function(){});}
-if(!D.hidden)tryPlay();
-D.addEventListener('visibilitychange',function(){if(D.hidden)v.pause();else tryPlay();});
+var PHONE=!!(W.matchMedia&&matchMedia('(max-width:700px)').matches);
+var hero=D.getElementById('top');
+/* телефон: видео живёт только пока виден первый экран */
+var heroSeen=!PHONE, heroIn=!PHONE, loaded=false, v=null;
+/* открыто по якорю ниже первого экрана (/#reestr): первый экран «не показан», пока человек сам не вернётся наверх */
+var h=location.hash.slice(1),tgt=h&&h!=='top'&&D.getElementById(h),deep=!!(PHONE&&tgt&&hero&&tgt.compareDocumentPosition(hero)&Node.DOCUMENT_POSITION_PRECEDING&&!hero.contains(tgt));
+var jumped=false;
+function allowed(){return heroIn&&heroSeen&&!D.hidden;}
+var failed=false;
+function tryPlay(){if(!v||failed)return;var p=v.play();if(p&&p.catch)p.catch(function(){});}
+function sync(){
+  if(allowed()){if(!v){if(loaded)startVideo();}else tryPlay();}
+  else if(v){v.pause();box.classList.remove('playing');}}
+if(PHONE&&hero&&'IntersectionObserver' in W){
+  new IntersectionObserver(function(es){var e=es[es.length-1];heroIn=e.isIntersecting;
+    if(heroIn&&(!deep||jumped))heroSeen=true;
+    if(!heroIn)jumped=true;
+    sync();},{threshold:0}).observe(hero);
+}else if(PHONE){heroIn=heroSeen=!deep;}
+var VIDEO={webm:'assets/video/bg.webm',mp4:'assets/video/bg.mp4',small:'assets/video/bg-small.mp4'};
+function startVideo(){if(v)return;
+  var el=D.createElement('video');el.muted=true;el.defaultMuted=true;el.loop=true;el.playsInline=true;el.setAttribute('playsinline','');el.setAttribute('muted','');el.preload='auto';el.setAttribute('aria-hidden','true');
+  var src='',type='';
+  if(PHONE){ if(el.canPlayType('video/mp4')){src=VIDEO.small;type='video/mp4';} }
+  else{
+    if(el.canPlayType('video/webm; codecs="vp9"')){src=VIDEO.webm;type='video/webm';}
+    else if(el.canPlayType('video/mp4; codecs="avc1.4D401F"')){src=VIDEO.mp4;type='video/mp4';}
+  }
+  if(!src)return;
+  v=el;
+  var so=D.createElement('source');so.src=src;so.type=type;v.appendChild(so);
+  /* браузер не смог декодировать — остаётся постер, видео стоит на паузе */
+  function fail(){failed=true;box.classList.remove('playing');try{v.pause();}catch(e){}}
+  so.addEventListener('error',fail);v.addEventListener('error',fail);
+  media.appendChild(v);
+  function rate(){try{v.playbackRate=.5;}catch(e){}}
+  v.addEventListener('loadedmetadata',rate);v.addEventListener('play',rate);
+  v.addEventListener('playing',function(){if(allowed())box.classList.add('playing');else v.pause();});
+  if(allowed())tryPlay();
 }
-function whenIdle(){if(W.requestIdleCallback)requestIdleCallback(startVideo,{timeout:2000});else setTimeout(startVideo,200);}
+D.addEventListener('visibilitychange',sync);
+/* видео — после события load и простоя главного потока: не конкурирует с шрифтами, постером и скриптами первого экрана */
+function whenIdle(){loaded=true;var go=function(){if(allowed())startVideo();};if(W.requestIdleCallback)requestIdleCallback(go,{timeout:2000});else setTimeout(go,200);}
 if(D.readyState==='complete')whenIdle();else W.addEventListener('load',whenIdle,{once:true});
 /* параллакс за мышью */
 var tx=0,ty=0,x=0,y=0,raf=0;

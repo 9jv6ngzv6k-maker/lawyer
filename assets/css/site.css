@@ -1,28 +1,12 @@
 /* База (прежде задавалась обёрткой артефакта) */
 :root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}
 
+/* v9 · шрифты первого экрана: Onest 400 и Playfair Display 400 (кириллица + латиница: цифры, пробелы, знаки препинания).
+   Остальные начертания — в fonts.css, подключается после события load (см. <head> в index.html). */
 @font-face{font-family:'Playfair Display';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/playfair-display-normal-400-8ca4d9dd.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
 @font-face{font-family:'Playfair Display';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/playfair-display-normal-400-18bd7f97.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'Playfair Display';font-style:italic;font-weight:400;font-display:swap;src:url(../fonts/playfair-display-italic-400-008d9b9f.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:'Playfair Display';font-style:italic;font-weight:400;font-display:swap;src:url(../fonts/playfair-display-italic-400-e69ad6ee.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'EB Garamond';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/eb-garamond-normal-400-c976668d.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:'EB Garamond';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/eb-garamond-normal-400-9c361ab2.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'EB Garamond';font-style:normal;font-weight:600;font-display:swap;src:url(../fonts/eb-garamond-normal-600-af58b330.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:'EB Garamond';font-style:normal;font-weight:600;font-display:swap;src:url(../fonts/eb-garamond-normal-600-4046b69a.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'EB Garamond';font-style:italic;font-weight:500;font-display:swap;src:url(../fonts/eb-garamond-italic-500-c354253c.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:'EB Garamond';font-style:italic;font-weight:500;font-display:swap;src:url(../fonts/eb-garamond-italic-500-09a14b20.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'Onest';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/onest-normal-400-7cd00173.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
 @font-face{font-family:'Onest';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/onest-normal-400-ec6b03cb.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'Onest';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/onest-normal-500-e8d08684.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:'Onest';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/onest-normal-500-9db4c793.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'Onest';font-style:normal;font-weight:600;font-display:swap;src:url(../fonts/onest-normal-600-1c3a4ee0.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:'Onest';font-style:normal;font-weight:600;font-display:swap;src:url(../fonts/onest-normal-600-1ef359a0.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'Onest';font-style:normal;font-weight:700;font-display:swap;src:url(../fonts/onest-normal-700-133d17eb.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:'Onest';font-style:normal;font-weight:700;font-display:swap;src:url(../fonts/onest-normal-700-6a6651db.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/jetbrains-mono-normal-400-46a14c9f.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url(../fonts/jetbrains-mono-normal-400-2530f568.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/jetbrains-mono-normal-500-cf3beecd.woff2) format('woff2');unicode-range:U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116}
-@font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url(../fonts/jetbrains-mono-normal-500-332f9ba7.woff2) format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 
 :root{
   --paper:#F3F5F8; --sheet:rgba(255,255,255,.8); --sheet-solid:#FFFFFF; --ink:#0E1B2C; --ink-2:#3B4757; --muted:#566273;
@@ -43,7 +27,17 @@ html{background:var(--paper);-webkit-text-size-adjust:100%;scroll-behavior:smoot
 body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.5;
   -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh}
 main{overflow-x:clip}
-html.intro .hdr,html.intro .hero{visibility:hidden}
+/* v9 · вход первого экрана: пока идёт подготовка (html.intro), элементы стоят в начальных кадрах хореографии,
+   а не скрыты целиком. h1 и .lead видимы с первого кадра (opacity 1), их вход — только сдвиг (transform). */
+html.intro .hdr-line,html.intro .facts-line{transform:scaleX(0)}
+html.intro .logo,html.intro .nav a,html.intro .hdr-in>.btn-sm,html.intro .burger{opacity:0;transform:translateY(-8px)}
+html.intro .h1 .w>span{transform:translateY(112%) rotate(4deg)}
+html.intro .strike path,html.intro #mBrk,html.intro #mU,html.intro #mO,html.intro #mA,html.intro #msU,html.intro #msO{stroke-dashoffset:1}
+html.intro .strike .w{opacity:1}
+html.intro .lead{transform:translateY(14px)}
+html.intro .meta,html.intro .hterm,html.intro .fact{opacity:0;transform:translateY(10px)}
+html.intro .cta-row>.mag{opacity:0;transform:translateY(16px)}
+html.intro .sit-jump,html.intro #cap li,html.intro .stage .enter,html.intro #note,html.intro #stampIn,html.intro .ms-a,html.intro .ms-b,html.intro #msNote,html.intro #msStamp{opacity:0}
 html.lock{overflow:hidden}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;text-align:inherit}
@@ -963,7 +957,7 @@ svg{display:block}
 .calc-band{margin-top:clamp(40px,4.4vw,64px);padding-top:clamp(28px,3vw,44px);border-top:1px solid var(--hair);scroll-margin-top:calc(var(--hdr) + 40px)}
 .calc-lb{margin-bottom:18px}
 .cc-go{display:none}
-.cc-t{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.cc-t{display:block;padding-bottom:.12em;margin-bottom:-.12em}
 @media (min-width:1021px){.otk{grid-template-columns:minmax(0,1.02fr) minmax(0,.98fr);gap:clamp(24px,3.4vw,52px)}}
 @media (min-width:1021px){.rn-q{display:none}.rn-h{font-size:clamp(20px,1.7vw,24px)}.rn-p{font-size:15px;line-height:1.55}.rn-norm{margin-top:10px}}
 html,body{overflow-anchor:none}
@@ -1314,8 +1308,7 @@ html,body{overflow-anchor:none}
   .h1{margin-top:12px}
   .lead{margin-top:12px}
   .cta-row{margin-top:16px}
-  .hterm{grid-template-columns:minmax(0,1fr) auto;margin-top:12px;padding:6px 12px}
-  .hterm-o{grid-column:1/-1;grid-row:2}
+  .hterm{margin-top:12px;padding:6px 12px 8px}
 }
 /* 4 · на широком томе строка акта и штамп стоят рядом — карточка не растёт в высоту */
 @media (min-width:901px){
@@ -1383,3 +1376,138 @@ html,body{overflow-anchor:none}
   .vA-back .cvb>.acc:first-of-type{border-top:1px solid rgba(26,42,63,.2)}
   .cvb-stat{margin-top:18px}
 }
+
+/* ═════════ v9 · задание арт-директора (docs/brief-v9.md) ═════════ */
+
+/* 4, 13, Q1 · мини-проверка срока: поле → ответ сразу под ним → подпись отдельной строкой.
+   Высота строки ответа зарезервирована под самое длинное состояние — цифры первого экрана не сдвигаются. */
+.hterm{grid-template-columns:minmax(0,1fr) auto;grid-template-areas:"f g" "o o" "n n";gap:0 18px;padding-bottom:10px}
+.hterm-f{grid-area:f}
+.hterm-go{grid-area:g}
+.hterm-o{grid-area:o;min-width:220px;margin-top:2px;min-height:calc(2 * 1.4em)}
+.hterm-n{grid-area:n;margin-top:4px;font-size:12px;line-height:1.4;color:var(--ink-2)}
+/* широкий первый экран: ответ справа от поля (≥ 220px, две строки зарезервированы), подпись — строкой ниже, ссылка рядом с ней */
+@media (min-width:1400px){
+  .hterm{grid-template-columns:auto minmax(220px,1fr) auto;grid-template-areas:"f o o" "n n g";column-gap:18px}
+  .hterm-o{align-self:center;margin-top:0}
+  .hterm-go{align-self:end;min-height:34px}
+}
+@media (max-width:620px){
+  .hterm-o{min-width:0;min-height:0}
+  .hterm-o:empty{margin:0}
+  .hterm-n{margin-top:4px;padding-top:5px;font-size:12px}
+}
+/* пока поле мини-проверки в фокусе (открыта клавиатура), нижняя панель не закрывает ответ */
+html.ht-focus .mbar{transform:translate3d(0,140%,0)}
+.calc-note{margin-top:18px;font-size:13.5px;line-height:1.5;color:var(--ink-2);max-width:36em}
+.calc-note+.fine{margin-top:8px}
+
+/* 2 · телефон: «Направления» — строки-ярлыки вместо папок; раскрываются опись и «Полный разбор» */
+.fd-r,.fd-m{display:none}
+@media (max-width:620px){
+  .fds{display:block;margin-top:0;border-top:1px solid var(--hair)}
+  .fd{border-bottom:1px solid var(--hair)}
+  .fds .fd-b{display:none}
+  .fd-r{display:grid;grid-template-columns:minmax(0,1fr) 18px;align-items:center;gap:4px 10px;width:100%;min-height:56px;padding:6px 2px 7px 0;text-align:left;color:var(--ink);-webkit-tap-highlight-color:transparent}
+  .fd-r-tab{grid-column:1;justify-self:start;display:inline-flex;align-items:center;gap:8px;max-width:100%;height:20px;padding:0 10px;border-radius:5px 5px 0 0;background:#D9E3EE;
+    font-size:11px;letter-spacing:.06em;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .fd-r-tab b{font-weight:500;color:var(--steel)}
+  .fd-r-t{grid-column:1;font-family:var(--serif);font-size:17.5px;line-height:1.15;letter-spacing:-.005em}
+  .fd-r .pm{grid-column:2;grid-row:1/3;width:18px;height:18px;color:var(--steel);transition:transform .5s var(--ease)}
+  .fd-r[aria-expanded="true"] .pm{transform:rotate(45deg)}
+  .fd-m{display:block;padding:0 0 18px}
+  .js .fd:not(.open) .fd-m{display:none}
+  .fd-m-s{font-size:14.5px;line-height:1.5;color:var(--ink-2)}
+  .fd-m-k{margin-top:14px;font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel)}
+  .fd-m-l{margin-top:8px;padding:6px 14px;background:#fff;border-radius:1px;box-shadow:0 0 0 1px rgba(14,27,44,.07),0 6px 14px -8px rgba(14,27,44,.28);
+    font-family:var(--doc);color:#14223A;transform:rotate(-.4deg)}
+  .fd-m-l li{display:flex;gap:8px;padding:7px 0;font-size:15.5px;line-height:1.4;border-bottom:1px dashed rgba(14,27,44,.12)}
+  .fd-m-l li:last-child{border-bottom:0}
+  .fd-m-l b{flex:none;font-weight:400;font-size:11px;color:var(--steel);padding-top:3px}
+  .fd-m-go{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:48px;margin-top:14px;padding:0 16px;border:1px solid rgba(14,27,44,.26);border-radius:2px;
+    background:rgba(255,255,255,.6);font-size:15px;font-weight:600;color:var(--ink)}
+  .fd-m-go svg{width:18px;height:18px;color:var(--steel)}
+  .fam{margin-top:30px;padding:18px 14px 18px 16px;gap:14px}
+  .fam-t{font-size:24px}
+  .fam-l{gap:7px}
+  .fam-l li{gap:10px;font-size:14.5px;line-height:1.4}
+  .fam-h .dr-lb{margin-bottom:4px}
+  .fam-b a{min-height:48px}
+  #napravleniya .sec-head{margin-bottom:22px}
+  #napravleniya>.sheet{padding-bottom:26px}
+  .fam-l .pensvg{width:18px;height:16px}
+  .fam-b{gap:8px}
+  /* тома: одна метка раздела; дубль «Том N · …», обложка «ДЕЛО» и мета-строка над h2 не показываются */
+  .tome-lb span:last-child{display:none}
+  .tome-lb{margin-bottom:12px}
+  .vA-front{display:none}
+  .vA-page>.vA-meta{display:none}
+}
+
+/* 3 · открытый том: «Что подготовить» и кнопки — на правой странице, под исходами */
+.vA-end{margin-top:26px;padding-top:0}
+.vA-end .cvb-prep{margin-top:0;padding-top:18px;border-top:1px solid var(--hair)}
+.vA-end .cvb-prep .check li{border-bottom-color:rgba(14,27,44,.12)}
+.vA-end .cvb-cta{margin-top:18px}
+.vA-end .cvb-cta .btn-ink{flex:1 1 auto}
+
+/* 7 · исходы в томе всегда в полном цвете — анимируется только штамп; у «В суде»/«В работе» ореола нет,
+   у выигранных — не дальше 12px от рамки */
+.js .vA .vA-page>.vA-outs,.js .vA .vA-page>.vA-g{opacity:1;transform:none;transition:none}
+.cvb>.vA-g{margin-top:6px}
+.cvb>.vA-g>.vA-lb:first-child{margin-top:26px}
+.vA-page>.cvb-stat{margin-top:26px}
+.vA-page>.cvb-st{margin-top:26px}
+.st-bloom,.vA .st-bloom{inset:-12px;border-radius:12px}
+.stamp-go .st-bloom{display:none}
+
+/* 5 · реестр: заголовок карточки целиком; на телефоне превью листа вдвое ниже (дыроколы и штамп на месте) */
+@media (max-width:620px){
+  .cc .cdoc{height:160px;padding:24px 16px 12px 32px}
+  .cc .cdoc-txt{max-height:92px}
+  .cc .cdoc-h{margin-top:8px;font-size:11.5px}
+  .cc .cdoc-d{margin-top:4px}
+  .cc .cdoc-m{margin-top:8px;font-size:13px}
+  .cc .stamp{right:10px;bottom:12px}
+  .cc .st-ink{padding:6px 10px 7px}
+  .cc .st-top{font-size:11px}
+  .cc .cdoc-hole{left:11px;width:9px;height:9px}
+  .cc .cdoc-no{top:10px;right:12px}
+  .cc-meta{margin-top:14px}
+  .ccs{row-gap:34px}
+}
+
+/* 8 · «Политика обработки данных» у формы: зона нажатия ≥ 32px, вид текста прежний */
+.agree-p .lnk-in{display:inline-block;padding:8px 0;margin:-8px 0}
+
+/* Q6 · ошибка у галочки согласия: квадрат выделен, текст ошибки рядом */
+.agree.bad .agree-box i{border:2px solid var(--ink);box-shadow:0 0 0 3px rgba(47,95,138,.3)}
+.agree-err{display:flex;gap:8px;align-items:baseline;margin:8px 0 0 36px;font-size:13.5px;line-height:1.45;font-weight:500;color:var(--ink)}
+.agree-err::before{content:"!";flex:none;display:inline-grid;place-items:center;width:16px;height:16px;border-radius:50%;background:var(--ink);color:#fff;font-size:11px;font-weight:700;line-height:1;transform:translateY(2px)}
+
+/* 10 · «Кто ведёт дело»: эмблема наверху левой колонки, под ней реквизиты; справа имя, статус, цитата */
+.who{align-items:start}
+.who-l .wfs{margin-top:28px}
+@media (min-width:1021px){.who-l .wfs{margin-top:18px}}
+@media (min-width:1021px){
+  .who{grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,4.4vw,64px)}
+  .who-l .emb{max-width:220px;margin:0}
+  .who-l .wf{grid-template-columns:104px minmax(0,1fr);padding:7px 0}
+  .who-l .wf dd{font-size:15px;line-height:1.45}
+}
+@media (max-width:1020px){
+  .who-r{order:-1}
+  .who-l .emb{margin-top:6px}
+}
+
+/* 11 · без JS всё раскрыто и видно: сворачивание и появление — только при html.js */
+html:not(.js) .acc-a{grid-template-rows:1fr!important;visibility:visible!important}
+html:not(.js) .acc-clip>*{opacity:1!important;transform:none!important}
+html:not(.js) .acc-b .pm,html:not(.js) .ftabs,html:not(.js) .vA-more-row,html:not(.js) .more-row{display:none}
+html:not(.js) .ccs .cc.xd,html:not(.js) .ccs .cc.xm{display:block}
+html:not(.js) .vA .vA-flip,.rm .vA .vA-flip{transform:rotateY(-179.4deg)}
+html:not(.js) .vA .vA-book,.rm .vA .vA-book{transform:none}
+/* reduced motion: том раскрыт и текст виден сразу, без ожидания прокрутки */
+.rm .vA .vA-page>*{opacity:1!important;transform:none!important}
+html:not(.js) .fpane+.fpane{margin-top:8px}
+

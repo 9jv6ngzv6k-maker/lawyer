@@ -16,8 +16,12 @@ function plural(n,a,b,c){n=Math.abs(n)%100;var m=n%10;if(n>10&&n<20)return c;if(
 function fmtDate(d){function p(x){return (x<10?'0':'')+x}return p(d.getDate())+'.'+p(d.getMonth()+1)+'.'+d.getFullYear()}
 function jumpTo(y){var p=R.style.scrollBehavior;R.style.scrollBehavior='auto';W.scrollTo(0,y);R.style.scrollBehavior=p;}
 function jumpBy(d){jumpTo(W.pageYOffset+d);}
-function scrollToEl(el,smooth){ if(!el) return; var y=el.getBoundingClientRect().top+W.pageYOffset-(parseFloat(getComputedStyle(R).scrollPaddingTop)||110);
-  W.scrollTo({top:y,behavior:(smooth&&!RM)?'smooth':'auto'}); }
+function scrollPad(){return parseFloat(getComputedStyle(R).scrollPaddingTop)||110;}
+/* v9 · Q4: позиция по раскладке (offsetTop), а не по getBoundingClientRect: лист .rv-sheet до появления сдвинут transform'ом,
+   и первый переход вставал ниже повторного */
+function docTop(el){var y=0;while(el){y+=el.offsetTop;el=el.offsetParent;}return y;}
+function scrollToEl(el,smooth){ if(!el) return; var y=docTop(el)-scrollPad();
+  W.scrollTo({top:Math.max(0,y),behavior:(smooth&&!RM)?'smooth':'auto'}); }
 
 /* ═════════════ ПЕРВЫЙ ЭКРАН (хореография «Досье») ═════════════ */
 var stage=$('#stage'), tilt=$('#tilt'), shake=$('#shake'), box=$('.stage-box');
@@ -58,7 +62,8 @@ function intro(){
   A($('.strike path'),[{strokeDashoffset:1},{strokeDashoffset:0}],{duration:520,delay:tStrike,easing:'cubic-bezier(.55,.05,.25,1)'});
   A($('.strike .w'),[{opacity:1},{opacity:.78}],{duration:500,delay:tStrike+260,easing:'ease-out'});
   A($('.meta'),[{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'none'}],{duration:900,delay:240});
-  A($('.lead'),[{opacity:0,transform:'translateY(14px)'},{opacity:1,transform:'none'}],{duration:1000,delay:640});
+  /* v9: .lead — элемент LCP, виден с первого кадра; вход только сдвигом */
+  A($('.lead'),[{transform:'translateY(14px)'},{transform:'none'}],{duration:1000,delay:640});
   $$('.cta-row>.mag').forEach(function(m,i){A(m,[{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:1000,delay:780+i*90});});
   A($('.sit-jump'),[{opacity:0},{opacity:1}],{duration:900,delay:1000});
   A($('.hterm'),[{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'none'}],{duration:900,delay:960});
@@ -139,18 +144,26 @@ function onScroll(){
   hdr.classList.toggle('scrolled',y>12);
   tfp=Math.max(0,Math.min(1,y/(vh*.6)));
   var v=1-.22*clamp(y/(vh*.9),0,1);
-  if(Math.abs(v-lastDim)>.008){lastDim=v; if(W.__bgDim){try{W.__bgDim(v)}catch(e){}}}
+  /* крайние значения (1 — самый верх, .78 — первый экран ушёл) передаются всегда: фон приходит точно в 0.55 и в 0.88 */
+  if(Math.abs(v-lastDim)>.008||(v!==lastDim&&(v===1||v===.78))){lastDim=v; if(W.__bgDim){try{W.__bgDim(v)}catch(e){}}}
   if(mbar){var fr=form.getBoundingClientRect(); mbar.classList.toggle('show',y>vh*.7&&!(fr.top<vh*.9&&fr.bottom>0));}
-  quoteProgress();
+  quoteProgress(); navUpdate();
 }
 W.addEventListener('scroll',onScroll,{passive:true});
 W.addEventListener('resize',function(){vw=innerWidth;vh=innerHeight;fit();onScroll();},{passive:true});
 
-/* активный пункт меню */
-if('IntersectionObserver' in W){
-  var navIO=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){var id=e.target.id;$$('.nav a').forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+id)});}})},{rootMargin:'-45% 0px -50% 0px'});
-  ['napravleniya','otkaz','tom1','bankrot','reestr','kto','kak','voprosy','zayavka'].forEach(function(id){var s=D.getElementById(id);if(s)navIO.observe(s)});
-}
+/* активный пункт меню (v9 · 6): раздел активен, когда его верх ушёл под шапку; наверху страницы не подсвечен ни один пункт.
+   После перехода по пункту меню раздел стоит на scroll-padding под шапкой — его пункт подсвечен, пока человек сам не прокрутит страницу. */
+var NAV_IDS=['napravleniya','otkaz','tom1','bankrot','reestr','kto','kak','voprosy','zayavka'], navSecs=NAV_IDS.map(function(id){return D.getElementById(id)}).filter(Boolean),
+    navLinks=$$('.nav a'), navCur, navPin=null;
+function navUpdate(){ if(!navLinks.length) return; var hb=hdr.getBoundingClientRect().bottom, cur=null;
+  navSecs.forEach(function(sec){ if(sec.getBoundingClientRect().top<=hb+1) cur=sec.id; });
+  if(navPin){ var pt=D.getElementById(navPin).getBoundingClientRect().top; if(pt>hb+1&&pt<=scrollPad()+8) cur=navPin; }
+  if(cur===navCur) return; navCur=cur;
+  navLinks.forEach(function(a){ var on=!!cur&&a.getAttribute('href')==='#'+cur; a.classList.toggle('on',on); if(on) a.setAttribute('aria-current','true'); else a.removeAttribute('aria-current'); }); }
+function unpin(){ if(navPin){ navPin=null; navUpdate(); } }
+W.addEventListener('wheel',unpin,{passive:true}); W.addEventListener('touchstart',unpin,{passive:true});
+D.addEventListener('keydown',function(e){ if(/^(Arrow(Up|Down)|Page(Up|Down)|Home|End| )$/.test(e.key)) unpin(); });
 
 /* ═════════════ СЛОИ: меню, справка, политика ═════════════ */
 var layers=[];
@@ -177,6 +190,12 @@ function setMenu(on){burger.setAttribute('aria-expanded',on?'true':'false');
   else{menu.classList.remove('open');setTimeout(function(){menu.hidden=true;unlock();},RM?0:350);}}
 burger.addEventListener('click',function(){setMenu(burger.getAttribute('aria-expanded')!=='true')});
 $$('a',menu).forEach(function(a){a.addEventListener('click',function(){setMenu(false)})});
+
+/* v9 · 2: телефон — папки строками; строка раскрывает опись и «Полный разбор» */
+$$('.fd-r').forEach(function(b){ b.addEventListener('click',function(){ var li=b.closest('.fd'), on=!li.classList.contains('open'), before=b.getBoundingClientRect().top;
+  li.classList.toggle('open',on); b.setAttribute('aria-expanded',on?'true':'false');
+  var after=b.getBoundingClientRect().top; if(Math.abs(after-before)>1) jumpBy(after-before);
+  if(on&&!RM){ var m=$('.fd-m',li); A(m,[{opacity:0,transform:'translate3d(0,-6px,0)'},{opacity:1,transform:'none'}],{duration:420}); } }); });
 
 /* справка по категории */
 var CAT_DIR={0:6,1:0,2:1,3:2,4:4,5:3,6:5,7:7,8:7,9:7,10:7,11:7};
@@ -241,6 +260,11 @@ function today(){var t=new Date();return new Date(t.getFullYear(),t.getMonth(),t
 function term(d){ /* три месяца со дня получения отказа; нет такого числа — последний день месяца (ст. 93 КАС) */
   var e=new Date(d.getFullYear(),d.getMonth()+3,1); e.setDate(Math.min(d.getDate(),new Date(e.getFullYear(),e.getMonth()+1,0).getDate())); var t=today(), days=Math.round((e-t)/864e5);
   return {end:e,days:days,future:d>t,p:clamp((t-d)/(e-d),0,1)}; }
+/* v9 · одна формулировка результата для мини-проверки, калькулятора и формы (13.2, 13.3) */
+function termLine(r){ var KAS=' · если спор с ведомством по КАС';
+  if(r.days>0) return {lead:(r.days%10===1&&r.days%100!==11?'Остался ':'Осталось ')+r.days+' '+plural(r.days,'день','дня','дней'),tail:' · срок истекает '+fmtDate(r.end)+KAS};
+  if(r.days===0) return {lead:'Сегодня последний день',tail:KAS};
+  return {lead:'Срок истёк '+fmtDate(r.end),tail:' · можно просить суд восстановить срок, если причина пропуска уважительная'}; }
 var cIn=$('#calcIn'), cOut=$('#calcOut'), cBig=$('#cBig'), cTxt=$('#cTxt'), cFill=$('#cFill'), cDot=$('#cDot'), cX=$('#cX');
 function calc(){ var s=cIn.value, d=parseDate(s); cX.hidden=true;
   var set=function(st,big,txt,p){cOut.dataset.state=st;cBig.textContent=big;cTxt.textContent=txt;var tw=cFill.parentNode.clientWidth;
@@ -249,9 +273,10 @@ function calc(){ var s=cIn.value, d=parseDate(s); cX.hidden=true;
   if(!d){ set('empty','—','Проверьте дату: ДД.ММ.ГГГГ',0); return; }
   var r=term(d);
   if(r.future){ set('empty','—','Дата ещё не наступила — проверьте год.',0); return; }
-  if(r.days>0){ set('ok',r.days+' '+plural(r.days,'день','дня','дней'),(r.days%10===1&&r.days%100!==11?'Остался ':'Осталось ')+r.days+' '+plural(r.days,'день','дня','дней')+'. Срок истекает '+fmtDate(r.end)+'.',r.p); }
-  else if(r.days===0){ set('ok','Сегодня','Сегодня последний день.',1); }
-  else { var n=-r.days; set('late','Срок истёк','Срок истёк '+fmtDate(r.end)+', просрочка '+n+' '+plural(n,'день','дня','дней')+'. Восстановление возможно по уважительной причине.',1); cX.hidden=false; }
+  var L=termLine(r);
+  if(r.days>0){ set('ok',r.days+' '+plural(r.days,'день','дня','дней'),L.lead+L.tail,r.p); }
+  else if(r.days===0){ set('ok','Сегодня',L.lead+L.tail,1); }
+  else { set('late','Срок истёк',L.lead+L.tail,1); cX.hidden=false; }
   if(!RM) A(cBig,[{opacity:0,transform:'translate3d(0,10px,0)'},{opacity:1,transform:'none'}],{duration:500});
 }
 /* мини-проверка срока на первом экране: та же term(), подробный расчёт — в #srok */
@@ -262,9 +287,18 @@ if(htIn){ var htDef=htOut.innerHTML; mask(htIn);
     if(!d){ htOut.textContent='Проверьте дату: ДД.ММ.ГГГГ'; return; }
     var r=term(d);
     if(r.future){ htOut.textContent='Дата ещё не наступила — проверьте год.'; return; }
-    if(r.days>0){ htOut.dataset.state='ok'; htOut.innerHTML='<b>'+(r.days%10===1&&r.days%100!==11?'Остался ':'Осталось ')+r.days+' '+plural(r.days,'день','дня','дней')+'</b> · срок истекает '+fmtDate(r.end); }
-    else if(r.days===0){ htOut.dataset.state='ok'; htOut.innerHTML='<b>Сегодня последний день</b> · '+fmtDate(r.end); }
-    else { htOut.dataset.state='late'; htOut.innerHTML='<b>Срок истёк '+fmtDate(r.end)+'</b> · восстановление возможно по уважительной причине'; } });
+    var L=termLine(r); htOut.dataset.state=r.days>=0?'ok':'late'; htOut.innerHTML='<b>'+esc(L.lead)+'</b>'+esc(L.tail); });
+  /* v9 · 4: при фокусе поле и ответ — в видимой области (visualViewport), не под шапкой; нижняя панель пока скрыта */
+  var htBox=$('#hterm'), htFocus=false, htT=0;
+  function htEnsure(){ if(!htFocus) return; var vv=W.visualViewport, vTop=vv?vv.offsetTop:0, vH=vv?vv.height:innerHeight;
+    var top=Math.max(hdr.getBoundingClientRect().bottom,vTop)+8, bottom=vTop+vH-8;
+    var t=$('.hterm-f',htBox).getBoundingClientRect().top, b=Math.max(htIn.getBoundingClientRect().bottom,htOut.getBoundingClientRect().bottom);
+    var d=0; if(b>bottom) d=b-bottom; if(t-d<top) d=t-top; if(Math.abs(d)>1) jumpBy(d); }
+  function htLater(){ clearTimeout(htT); htEnsure(); htT=setTimeout(htEnsure,350); }
+  htIn.addEventListener('focus',function(){ htFocus=true; R.classList.add('ht-focus'); htLater(); });
+  htIn.addEventListener('blur',function(){ htFocus=false; R.classList.remove('ht-focus'); clearTimeout(htT); });
+  htIn.addEventListener('input',function(){ requestAnimationFrame(htEnsure); });
+  if(W.visualViewport) W.visualViewport.addEventListener('resize',htLater);
   htGo.addEventListener('click',function(){ if(parseDate(htIn.value)&&cIn){ cIn.value=htIn.value; calc(); dateIn.value=htIn.value; dateOut(); } }); }
 
 if(vw<=620){var hd=$('.how-d');if(hd)hd.removeAttribute('open');}
@@ -273,6 +307,7 @@ if(cIn){ mask(cIn); cIn.addEventListener('input',calc); calc();
 
 /* тома: первые 3 исхода видны, остальные — кнопкой «Ещё N» */
 $$('.vA-more').forEach(function(b){ var lb=$('span',b), txt=lb.textContent, ids=b.getAttribute('aria-controls').split(' ');
+  ids.forEach(function(id){ var el=D.getElementById(id); if(el) el.hidden=true; });
   b.addEventListener('click',function(){ var on=b.getAttribute('aria-expanded')!=='true';
     ids.forEach(function(id,i){ var el=D.getElementById(id); if(!el) return; el.hidden=!on;
       if(on) A(el,[{opacity:0,transform:'translate3d(0,14px,0)'},{opacity:1,transform:'none'}],{duration:600,delay:i*80}); });
@@ -314,6 +349,8 @@ $$('.acc-b').forEach(function(b){b.addEventListener('click',function(){var acc=b
   $$('.acc',acc.parentNode).forEach(function(x){if(x!==acc&&x.classList.contains('open')){var a=$('.acc-a',x);a.style.transition='none';x.classList.remove('open');$('.acc-b',x).setAttribute('aria-expanded','false');void a.offsetHeight;requestAnimationFrame(function(){a.style.transition='';});}});
   acc.classList.toggle('open',on);b.setAttribute('aria-expanded',on?'true':'false');
   var after=b.getBoundingClientRect().top; if(Math.abs(after-before)>1){jumpBy(after-before);}})});
+/* v9 · 11: без JS видны обе вкладки; с JS — только выбранная */
+$$('.fpane').forEach(function(p,k){ var t=$('#ft'+k); p.hidden=!(t&&t.getAttribute('aria-selected')==='true'); });
 $$('.ftab').forEach(function(t,i){t.addEventListener('click',function(){$$('.ftab').forEach(function(x){x.setAttribute('aria-selected',x===t?'true':'false')});
   $$('.fpane').forEach(function(p,k){p.hidden=k!==i;p.classList.remove('fp-in');if(k===i){void p.offsetWidth;p.classList.add('fp-in');}});})});
 D.addEventListener('click',function(e){var b=e.target.closest('[data-faq]');if(!b)return;var t=$('#ft'+b.dataset.faq);if(t)t.click();scrollToEl($('#voprosy'),true);});
@@ -338,7 +375,7 @@ function renderPrep(i){ var list=(i>=0&&i<8)?S.prep[i]:S.prepAll; prepFor.textCo
   prepList.innerHTML=list.map(function(x,k){return '<li style="--k:'+k+'"><span class="box" aria-hidden="true">'+TICK+'</span>'+esc(x)+'</li>'}).join('');
   var fp=prepList.closest('.fprep'); fp.classList.remove('drawn'); requestAnimationFrame(function(){requestAnimationFrame(function(){fp.classList.add('drawn')})}); }
 function setWho(w){var r=$('#lead [name=who][value="'+w+'"]');if(r)r.checked=true;
-  textIn.placeholder=w==='family'?'Кто он вам, где он сейчас, что пришло от ведомства и когда':'Что произошло и что ответило ведомство';}
+  textIn.placeholder=w==='family'?'Кто он вам, что пришло от ведомства и когда. Место службы и номер части не указывайте.':'Что произошло и что ответило ведомство';}
 function setDir(i,sub,who){ if(i==null||isNaN(i)) return; sel.value=String(i); curSub=sub||''; subNote.hidden=!curSub; subNote.textContent=curSub?'Уточнение: '+curSub:'';
   $('.fld',sel.parentNode.parentNode)&&sel.closest('.fld').classList.remove('bad'); renderPrep(+i); if(who) setWho(who); }
 sel.addEventListener('change',function(){curSub='';subNote.hidden=true;renderPrep(+sel.value);sel.closest('.fld').classList.remove('bad');});
@@ -346,9 +383,7 @@ $$('#lead [name=who]').forEach(function(r){r.addEventListener('change',function(
 function dateOut(){ var s=dateIn.value, d=parseDate(s); dOut.classList.remove('late');
   if(!s){dOut.textContent='';return;} if(s.length<10){dOut.textContent='';return;} if(!d){dOut.textContent='Проверьте дату: ДД.ММ.ГГГГ';return;}
   var r=term(d); if(r.future){dOut.textContent='Дата ещё не наступила — проверьте год.';return;}
-  if(r.days>0) dOut.textContent=(r.days%10===1&&r.days%100!==11?'Остался ':'Осталось ')+r.days+' '+plural(r.days,'день','дня','дней')+'. Срок истекает '+fmtDate(r.end)+'.';
-  else if(r.days===0) dOut.textContent='Сегодня последний день.';
-  else {dOut.classList.add('late');dOut.textContent='Срок истёк '+fmtDate(r.end)+', просрочка '+(-r.days)+' '+plural(-r.days,'день','дня','дней')+'. Восстановление возможно по уважительной причине.';} }
+  var L=termLine(r); if(r.days<0) dOut.classList.add('late'); dOut.textContent=L.lead+L.tail; }
 mask(dateIn); dateIn.addEventListener('input',dateOut);
 
 /* любой элемент с data-dir → заявка с выбранной ситуацией */
@@ -364,17 +399,25 @@ function goForm(){ var target=vw<=1020?$('#blank'):form; scrollToEl(target,true)
   (function wait(){ var y=W.pageYOffset; if((y===last&&Date.now()-t0>250)||Date.now()-t0>1600||RM){ if(n&&!n.value&&!lead.hidden)n.focus({preventScroll:true}); return; } last=y; setTimeout(wait,90); })(); }
 D.addEventListener('click',function(e){ if(e.defaultPrevented) return; var a=e.target.closest('a[href^="#"]'); if(!a||a.closest('#dive')) return;
   var id=a.getAttribute('href').slice(1); if(!id||S.cases[id]) return; var el=D.getElementById(id); if(!el) return;
-  e.preventDefault(); if(id==='zayavka'){goForm();return;} if(id==='top'){W.scrollTo({top:0,behavior:RM?'auto':'smooth'});return;} scrollToEl(el,true); });
+  e.preventDefault(); navPin=NAV_IDS.indexOf(id)>=0?id:null;
+  if(id==='zayavka'){ if(a.hasAttribute('data-dir-reset')) resetDir(); goForm(); return; }
+  if(id==='top'){W.scrollTo({top:0,behavior:RM?'auto':'smooth'});return;} scrollToEl(el,true); });
+/* v9 · Q3: том 1 охватывает несколько ситуаций — кнопка сбрасывает выбор, «Что подготовить» и уточнение */
+function resetDir(){ sel.value=''; curSub=''; subNote.hidden=true; subNote.textContent=''; sel.closest('.fld').classList.remove('bad'); renderPrep(-1); }
 
-var err=$('#formErr'), done=$('#done'), blank=$('#blank'), mailText='';
+var err=$('#formErr'), done=$('#done'), blank=$('#blank'), mailText='', agreeErr=$('#agreeErr');
+lead.agree.addEventListener('change',function(){ if(lead.agree.checked){ agreeErr.hidden=true; lead.agree.removeAttribute('aria-invalid'); lead.agree.closest('.agree').classList.remove('bad'); } });
 lead.addEventListener('submit',function(e){e.preventDefault();var f=lead.elements,bad=[];
   $$('.fld,.agree',lead).forEach(function(x){x.classList.remove('bad')});
   if(!f.name.value.trim())bad.push([f.name,'Укажите, как к вам обращаться']);
   if(f.contact.value.trim().length<5)bad.push([f.contact,'Укажите телефон или ник в Telegram']);
   if(!sel.value)bad.push([sel,'Выберите ситуацию — или «Другое или не знаю, как назвать»']);
   if(dateIn.value&&!parseDate(dateIn.value))bad.push([dateIn,'Проверьте дату: ДД.ММ.ГГГГ']);
-  if(!f.agree.checked)bad.push([f.agree,'Нужно согласие на обработку данных']);
-  if(bad.length){bad.forEach(function(b){var p=b[0].closest('.fld,.agree');if(p)p.classList.add('bad')});err.textContent=bad[0][1];err.hidden=false;bad[0][0].focus();return;}
+  /* v9 · Q6: ошибка согласия — у самого квадрата (рамка, текст рядом, aria-describedby), общий блок — для остальных полей */
+  var agreeBad=!f.agree.checked; agreeErr.hidden=!agreeBad; if(agreeBad){f.agree.setAttribute('aria-invalid','true');bad.push([f.agree,''] );}else f.agree.removeAttribute('aria-invalid');
+  if(bad.length){bad.forEach(function(b){var p=b[0].closest('.fld,.agree');if(p)p.classList.add('bad')});
+    var firstMsg=bad.filter(function(b){return b[1]})[0]; if(firstMsg){err.textContent=firstMsg[1];err.hidden=false;}else err.hidden=true;
+    bad[0][0].focus();return;}
   err.hidden=true;
   var dir=S.dirs[+sel.value]||'', family=(lead.querySelector('[name=who]:checked')||{}).value==='family';
   mailText='Заявка с сайта\nИмя: '+f.name.value.trim()+'\nКонтакт: '+f.contact.value.trim()+'\nСитуация: '+dir+(curSub?'\nУточнение: '+curSub:'')+
@@ -383,7 +426,10 @@ lead.addEventListener('submit',function(e){e.preventDefault();var f=lead.element
   var body=mailText.length>1400?mailText.slice(0,1400)+'…\n(полный текст скопируйте кнопкой «Скопировать текст» на сайте)':mailText;
   var href='mailto:yujiklop74@yandex.ru?subject='+encodeURIComponent('Заявка с сайта — '+dir)+'&body='+encodeURIComponent(body);
   try{var a=D.createElement('a');a.href=href;a.style.display='none';D.body.appendChild(a);a.click();a.remove();}catch(x){location.href=href;}
-  lead.hidden=true;done.hidden=false;done.focus({preventScroll:true});var st=$('.stamp',done);st.classList.remove('hit');void st.offsetWidth;st.classList.add('hit');
+  lead.hidden=true;done.hidden=false;
+  /* v9 · Q2: экран «Готово» открывается с начала — верх сразу под шапкой, затем фокус без прокрутки */
+  jumpTo(Math.max(0,done.getBoundingClientRect().top+W.pageYOffset-hdr.getBoundingClientRect().bottom-8));
+  done.focus({preventScroll:true});var st=$('.stamp',done);st.classList.remove('hit');void st.offsetWidth;st.classList.add('hit');
   setTimeout(function(){blank.classList.remove('knock');void blank.offsetWidth;blank.classList.add('knock')},RM?0:300);
   A(done,[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:600});
 });
@@ -391,7 +437,7 @@ $('#copyBtn').addEventListener('click',function(){var b=this,lb=$('span',b);
   function ok(){lb.textContent='Скопировано';setTimeout(function(){lb.textContent='Скопировать текст'},2400);}
   function fb(){var t=D.createElement('textarea');t.value=mailText;t.setAttribute('readonly','');t.style.position='fixed';t.style.opacity='0';D.body.appendChild(t);t.select();try{D.execCommand('copy');ok();}catch(x){}t.remove();}
   if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(mailText).then(ok,fb);}else fb();});
-$('#againBtn').addEventListener('click',function(){lead.hidden=false;done.hidden=true;lead.reset();curSub='';subNote.hidden=true;dOut.textContent='';setWho('self');renderPrep(-1);$('#lead [name=name]').focus();});
+$('#againBtn').addEventListener('click',function(){lead.hidden=false;done.hidden=true;lead.reset();agreeErr.hidden=true;curSub='';subNote.hidden=true;dOut.textContent='';setWho('self');renderPrep(-1);$('#lead [name=name]').focus();});
 D.addEventListener('click',function(e){var p=e.target.closest('[data-policy]');if(p){e.preventDefault();openLayer($('#policy'),p);return;}
   var c=e.target.closest('[data-close]');if(c&&!c.hasAttribute('data-dir')){var l=c.closest('.drawer,.modal');if(l)closeLayer(l);return;}
   var k=e.target.closest('[data-cat]');if(k){openCat(+k.dataset.cat,k);}});
@@ -491,6 +537,8 @@ function start(){
 }
 function deep(){ var id=location.hash.slice(1); if(S.cases[id]) setTimeout(function(){openCase(id,null,true)},RM?0:120); }
 var fr=D.fonts&&D.fonts.ready?D.fonts.ready:Promise.resolve(), started=false;
+/* v9: отложенные начертания (fonts.css) приходят после load — пересчитать позицию пометки на листе */
+if(D.fonts&&D.fonts.addEventListener) D.fonts.addEventListener('loadingdone',function(){ if(started){ layoutNote(); } });
 function go(){ if(started) return; started=true; try{start();}catch(err){R.classList.remove('intro'); if(W.console) console.warn(err);} }
 fr.then(function(){requestAnimationFrame(go)}); setTimeout(go,1500);
 })();
