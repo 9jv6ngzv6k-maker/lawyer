@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Варианты дизайна</title>
+<meta name="description" content="Сравнение вариантов дизайна сайта «Халбаев и партнёры»: полные страницы на компьютере и телефоне.">
+<style>
+:root{--bg:#0F1318;--panel:#171C23;--line:#262E38;--ink:#E7EDF4;--mute:#8C9AAB;--acc:#9CC0E4;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:20px 16px 40px}
+.wrap{max-width:1320px;margin:0 auto;display:grid;gap:16px}
+h1{font-size:22px;font-weight:650;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.lead{color:var(--mute);margin:0;max-width:72ch}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{all:unset;cursor:pointer;display:flex;align-items:center;gap:10px;padding:10px 16px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--mute);font-weight:600}
+.tab .tl{font:600 12px/1 ui-monospace,Menlo,monospace;border:1px solid var(--line);border-radius:6px;padding:4px 6px}
+.tab .cur{font-size:11px;font-weight:600;color:var(--acc)}
+.tab[aria-selected=true]{color:var(--ink);border-color:var(--acc);background:#1C2530}
+.tab[aria-selected=true] .tl{color:var(--bg);background:var(--acc);border-color:var(--acc)}
+.tab:focus-visible,.ctl:focus-visible,.open:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+.ctls{display:flex;gap:8px;flex-wrap:wrap}
+.ctl,.open{all:unset;cursor:pointer;padding:9px 14px;border-radius:10px;border:1px solid var(--line);color:var(--ink);font-size:14px}
+.ctl[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.open{border-color:var(--acc);color:var(--acc)}
+.info{display:grid;gap:6px;max-width:86ch}
+.info h2{margin:0;font-size:17px}
+.info p{margin:0}
+.info .tags{color:var(--mute);font-size:13px}
+.stage{position:relative;border:1px solid var(--line);border-radius:14px;background:#0A0D11;overflow:hidden}
+.frame{position:absolute;top:0;left:0;border:0;transform-origin:0 0;background:#fff}
+.note{color:var(--mute);font-size:13px;margin:0}
+@media (max-width:700px){.bar{flex-direction:column;align-items:stretch}.tab{padding:9px 12px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Варианты дизайна сайта</h1>
+  <p class="lead">Четыре полноценные страницы на одном и том же контенте. «Досье» — текущий сайт, остальные — новые направления. Прокрутите окно предпросмотра, откройте формы и дела — всё живое.</p>
+  <div class="bar">
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <div class="ctls">
+      <button class="ctl" id="dev-d" aria-pressed="true">Компьютер</button>
+      <button class="ctl" id="dev-m" aria-pressed="false">Телефон</button>
+      <a class="open" id="open" href="#" target="_blank" rel="noopener">Открыть целиком ↗</a>
+    </div>
+  </div>
+  <div class="info" id="info" aria-live="polite"></div>
+  <div class="stage" id="stage"><iframe class="frame" id="fr" title="Предпросмотр варианта"></iframe></div>
+  <p class="note">Компьютер показан в масштабе экрана 1440 px, телефон — 390 px.</p>
+</div>
+<script>
+var V=[
+ {k:'dosye',l:'A',n:'Досье',src:'../index.html',cur:true,
+  d:'Светлый, официальный. Листы отказа с пометками юриста, определение суда и штамп «Выплачено после иска»; видео-подложка с картотекой, тома по КАС и АПК.',
+  t:'Текущий сайт · видео · анимация листов'},
+ {k:'stal',l:'B',n:'Сталь',src:'stal/index.html',d:'',t:''},
+ {k:'hronika',l:'C',n:'Хроника',src:'hronika/index.html',d:'',t:''},
+ {k:'poryadok',l:'D',n:'Порядок',src:'poryadok/index.html',d:'',t:''}
+];
+var tabs=document.getElementById('tabs'),fr=document.getElementById('fr'),stage=document.getElementById('stage'),info=document.getElementById('info'),open=document.getElementById('open');
+var cur=0,mobile=false;
+V.forEach(function(v,i){var b=document.createElement('button');b.className='tab';b.setAttribute('role','tab');b.id='t-'+v.k;
+  b.innerHTML='<span class="tl">'+v.l+'</span><span>'+v.n+'</span>'+(v.cur?'<span class="cur">сейчас</span>':'');
+  b.addEventListener('click',function(){pick(i)});tabs.appendChild(b);});
+function esc(s){return s.replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c]})}
+function pick(i){cur=i;var v=V[i];
+  [].forEach.call(tabs.children,function(b,j){b.setAttribute('aria-selected',j===i?'true':'false')});
+  info.innerHTML='<h2>'+v.l+' · '+esc(v.n)+'</h2>'+(v.d?'<p>'+esc(v.d)+'</p>':'')+(v.t?'<p class="tags">'+esc(v.t)+'</p>':'');
+  fr.src=v.src;open.href=v.src;
+  try{history.replaceState(null,'','#'+v.k)}catch(e){}
+  fit();}
+function fit(){var W=mobile?390:1440,H=mobile?844:900,avail=stage.parentNode.clientWidth,max=mobile?Math.min(avail,420):avail;
+  var s=Math.min(1,max/W);fr.style.width=W+'px';fr.style.height=H+'px';fr.style.transform='scale('+s+')';
+  stage.style.width=Math.round(W*s)+'px';stage.style.height=Math.round(H*s)+'px';stage.style.margin=mobile?'0 auto':'0';}
+function dev(m){mobile=m;document.getElementById('dev-d').setAttribute('aria-pressed',!m);document.getElementById('dev-m').setAttribute('aria-pressed',m);fit();}
+document.getElementById('dev-d').addEventListener('click',function(){dev(false)});
+document.getElementById('dev-m').addEventListener('click',function(){dev(true)});
+addEventListener('resize',fit);
+tabs.addEventListener('keydown',function(e){if(e.key!=='ArrowRight'&&e.key!=='ArrowLeft')return;var n=(cur+(e.key==='ArrowRight'?1:V.length-1))%V.length;pick(n);tabs.children[n].focus();});
+var h=location.hash.slice(1),start=0;V.forEach(function(v,i){if(v.k===h)start=i});
+if(innerWidth<700)dev(true);
+pick(start);
+</script>
+</body>
+</html>
