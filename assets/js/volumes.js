@@ -15,9 +15,9 @@ function setup(v){var page=v.querySelector('.vA-page'),ocs=[].slice.call(v.query
     io=new IntersectionObserver(function(es){es.filter(function(e){return e.isIntersecting}).sort(function(a,b){return a.boundingClientRect.top-b.boundingClientRect.top})
       .forEach(function(e){io.unobserve(e.target);q.push(e.target);});if(!busy)next();},{threshold:.6});ocs.forEach(function(o){io.observe(o)});}
   function play(){v.classList.remove('open','untie','shown');ocs.forEach(function(o){var s=o.querySelector('.stamp');if(s)s.classList.remove('hit')});void v.offsetWidth;
-    if(RM||innerWidth<=900){v.classList.add('open','shown');setTimeout(arm,RM?0:500);return;}
-    setTimeout(function(){v.classList.add('untie')},80);setTimeout(function(){v.classList.add('open')},520);
-    setTimeout(function(){v.classList.add('shown')},1450);setTimeout(arm,2000);}
+    if(RM||innerWidth<=900){v.classList.add('open','shown');nav();setTimeout(arm,RM?0:500);return;}
+    setTimeout(function(){v.classList.add('untie')},80);setTimeout(function(){v.classList.add('open');nav();},520);
+    setTimeout(function(){v.classList.add('shown');nav();},1450);setTimeout(arm,2000);}
   v.__play=play;
   if('IntersectionObserver' in window){var o=new IntersectionObserver(function(es){if(es[0].isIntersecting){o.disconnect();play();}},{rootMargin:'0px 0px -38% 0px',threshold:0});o.observe(v);}else play();}
 /* v8: левая половина (оборот обложки) лежит поверх страницы абсолютно — страница не должна быть ниже её содержимого */
@@ -26,7 +26,9 @@ function fitBack(v){var page=v.querySelector('.vA-page'),cvb=v.querySelector('.c
   var cs=getComputedStyle(cvb),h=parseFloat(cs.paddingTop)+parseFloat(cs.paddingBottom);
   [].forEach.call(cvb.children,function(c){var s=getComputedStyle(c);h+=c.offsetHeight+(c.classList.contains('cvb-end')?0:parseFloat(s.marginTop)||0)+(parseFloat(s.marginBottom)||0);});
   page.style.minHeight=Math.ceil(h)+'px';}
-function fitAll(){vols.forEach(fitBack);}
+/* v10 · 3: после выравнивания и раскрытия тома подсветка меню обновляется сразу (navUpdate — в app.js) */
+function nav(){if(window.__navUpdate)window.__navUpdate();}
+function fitAll(){vols.forEach(fitBack);nav();}
 /* v9 · Q7: порядок Tab = порядок чтения. Открытый том (>900px): левая страница (оборот обложки), потом правая — лист идёт после обложки.
    Узкий экран: обложка → лист → оборот — лист переносится внутрь .vA-flip (там display:contents) между лицевой стороной и оборотом. */
 var MQ=window.matchMedia?matchMedia('(max-width:900px)'):null;

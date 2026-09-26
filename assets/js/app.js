@@ -162,6 +162,9 @@ function navUpdate(){ if(!navLinks.length) return; var hb=hdr.getBoundingClientR
   if(cur===navCur) return; navCur=cur;
   navLinks.forEach(function(a){ var on=!!cur&&a.getAttribute('href')==='#'+cur; a.classList.toggle('on',on); if(on) a.setAttribute('aria-current','true'); else a.removeAttribute('aria-current'); }); }
 function unpin(){ if(navPin){ navPin=null; navUpdate(); } }
+/* v10 · 3: раскрытие тома, выравнивание страниц (volumes.js → fitAll) и другие сдвиги раскладки без события scroll — подсветка сразу */
+W.__navUpdate=navUpdate;
+if(W.ResizeObserver){ var navRaf=0; new ResizeObserver(function(){ if(!navRaf) navRaf=requestAnimationFrame(function(){ navRaf=0; navUpdate(); }); }).observe(D.body); }
 W.addEventListener('wheel',unpin,{passive:true}); W.addEventListener('touchstart',unpin,{passive:true});
 D.addEventListener('keydown',function(e){ if(/^(Arrow(Up|Down)|Page(Up|Down)|Home|End| )$/.test(e.key)) unpin(); });
 
@@ -299,7 +302,12 @@ if(htIn){ var htDef=htOut.innerHTML; mask(htIn);
   htIn.addEventListener('blur',function(){ htFocus=false; R.classList.remove('ht-focus'); clearTimeout(htT); });
   htIn.addEventListener('input',function(){ requestAnimationFrame(htEnsure); });
   if(W.visualViewport) W.visualViewport.addEventListener('resize',htLater);
-  htGo.addEventListener('click',function(){ if(parseDate(htIn.value)&&cIn){ cIn.value=htIn.value; calc(); dateIn.value=htIn.value; dateOut(); } }); }
+  /* v10 · 1: на ≥ 1200px ссылка — слова «подробный калькулятор» в подписи (#htGo2), отдельная кнопка скрыта; ниже — наоборот,
+     слова подписи — обычный текст и в порядок Tab не попадают */
+  var htGo2=$('#htGo2'), htMQ=W.matchMedia?matchMedia('(min-width:1200px)'):null;
+  function htGoSync(){ if(htGo2) htGo2.tabIndex=(!htMQ||htMQ.matches)?0:-1; }
+  htGoSync(); if(htMQ){ if(htMQ.addEventListener) htMQ.addEventListener('change',htGoSync); else if(htMQ.addListener) htMQ.addListener(htGoSync); }
+  [htGo,htGo2].forEach(function(a){ if(a) a.addEventListener('click',function(){ if(parseDate(htIn.value)&&cIn){ cIn.value=htIn.value; calc(); dateIn.value=htIn.value; dateOut(); } }); }); }
 
 if(vw<=620){var hd=$('.how-d');if(hd)hd.removeAttribute('open');}
 if(cIn){ mask(cIn); cIn.addEventListener('input',calc); calc();
